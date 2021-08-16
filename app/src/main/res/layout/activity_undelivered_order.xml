@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.khushbakht.grocerjin.activities.SuccessfulDelivery">
+
+
+    <include
+        layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order no: "
+            android:layout_marginTop="5dp"
+            android:textColor="#000"
+            android:id="@+id/orderNolabel"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="#000000"
+            android:id="@+id/orderNo"
+            android:layout_toEndOf="@+id/orderNolabel"
+            android:textSize="20sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total amount: "
+            android:id="@+id/totalAmountLabel"
+            android:layout_toStartOf="@+id/amountPaid"
+            android:layout_alignTop="@+id/orderNo"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_alignTop="@+id/totalAmountLabel"
+            android:id="@+id/amountPaid"
+            android:textSize="20dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address:"
+            android:id="@+id/addressLabel"
+            android:textStyle="bold"
+            android:layout_marginTop="2dp"
+            android:layout_alignStart="@+id/orderNolabel"
+            android:layout_below="@+id/orderNolabel"
+            android:layout_marginLeft="5dp"
+            android:textSize="18sp"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:id="@+id/address"
+            android:layout_below="@+id/addressLabel"
+            android:textSize="20dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time Of Delivery"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:layout_marginTop="2dp"
+            android:layout_below="@+id/address"
+            android:textStyle="bold"
+            android:id="@+id/timeOfDileveryLabel"
+            android:layout_marginLeft="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:id="@+id/timeOfDilevery"
+            android:layout_below="@+id/timeOfDileveryLabel"
+            android:textSize="20dp"
+            android:layout_marginLeft="5dp"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Comments:"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"
+        android:textSize="20sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="500"
+        >
+        <EditText
+            android:id="@+id/undeliveredcomments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:scrollbars="vertical"
+            android:textColor="#000"
+            android:fontFamily="sans-serif"
+            android:hint="Write a comment"
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            >
+        </EditText>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/undelivered"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/colorAccent"
+        android:paddingLeft="100dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:paddingRight="100dp"
+        android:text="Submit"
+        android:layout_marginBottom="4dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:textColor="#ffff" />
+
+
+
+</LinearLayout>
+    </ScrollView>

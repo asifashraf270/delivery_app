@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+<ScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context="com.example.khushbakht.grocerjin.activities.Login"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="#ffff"
+        android:layout_marginTop="25dp"
+        android:textSize="48sp"
+        android:id="@+id/name"
+        android:maxLines="1"
+        android:layout_alignParentTop="true"
+        android:textAlignment="center"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:textColor="#ffff"
+        android:textSize="20sp"
+        android:id="@+id/textView2"
+        android:textAlignment="center"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delivery App"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:textColor="#ffff"
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:textColor="#fff"
+        tools:layout_editor_absoluteY="262dp"
+        tools:layout_editor_absoluteX="8dp"
+        android:id="@+id/idText"
+        android:layout_marginTop="100dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_marginTop="6dp"
+        android:textAlignment="center"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:alpha="0.9"
+        android:background="#fff"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textColor="#fff"
+        android:id="@+id/verificationText"
+        android:layout_marginTop="25dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:alpha="0.9"
+        android:textAlignment="center"
+        android:inputType="textPassword"
+        android:background="#fff"
+        android:id="@+id/verification"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:maxLength="5"
+        android:layout_marginTop="6dp" />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:text="Sign in"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:layout_marginTop="100dp"
+        android:id="@+id/login" />
+
+
+</LinearLayout>
+</ScrollView>-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
+    android:paddingHorizontal="20dp"
+    android:fitsSystemWindows="true"
+    android:paddingVertical="20dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_45ssp"
+            android:text="@string/welcome"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_23ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></TextView>
+
+        <TextView
+            android:id="@+id/welcomeMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signInContinue"
+            android:textSize="@dimen/_16ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/welcome"></TextView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/_100ssp"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/welcomeMessage">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/username"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Please Enter Phone Number"
+                    android:inputType="text"></com.google.android.material.textfield.TextInputEditText>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/verification"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6ssp"
+                app:errorEnabled="true"
+                app:passwordToggleEnabled="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/username">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Please Enter Password"
+                    android:inputType="textPassword"></com.google.android.material.textfield.TextInputEditText>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/login"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10ssp"
+                android:background="@drawable/login_button_selector"
+                android:text="@string/loginTxt"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toBottomOf="@id/verification"></Button>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></ProgressBar>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

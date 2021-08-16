@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+    tools:context="com.example.khushbakht.grocerjin.activities.Notifications">
+
+        <include
+            layout="@layout/toolbar"/>
+
+
+
+        <FrameLayout
+
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+
+            >
+
+            <androidx.recyclerview.widget.RecyclerView
+
+                android:id="@+id/inbox_recyclerView"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:paddingTop="20dp"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                >
+
+            </androidx.recyclerview.widget.RecyclerView>>
+
+            <TextView
+                android:id="@+id/null_notifications"
+                android:layout_width="500dp"
+                android:layout_height="100dp"
+
+                android:layout_gravity="center"
+                android:text="No Notifications"
+                android:fontFamily="sans-serif"
+                android:textAlignment="center"
+                android:paddingTop="20dp"
+                android:textColor="@color/colorAccent"
+                android:alpha="0.7"
+                android:textStyle="bold"
+                android:textSize="40sp"
+
+                />
+
+        </FrameLayout>>
+
+
+
+
+
+    </LinearLayout>

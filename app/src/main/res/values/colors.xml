@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3a5c23</color>
+    <color name="colorPrimaryDark">#57951c</color>
+    <color name="nav.item.background">#434c41</color>
+    <color name="nav.item.background.default">#141915</color>
+    <color name="colorAccent">#57951c</color>
+    <color name="white">#fff</color>
+    <color name="black">#000</color>
+    <color name="iconsColor">#ff0000</color>
+</resources>

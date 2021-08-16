@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.example.khushbakht.grocerjin.CustomScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.khushbakht.grocerjin.activities.SuccessfulDelivery">
+
+
+    <include
+        layout="@layout/toolbar" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order no: "
+            android:layout_marginTop="5dp"
+            android:textColor="#000"
+            android:id="@+id/orderNolabel"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="#000000"
+        android:id="@+id/orderNo"
+        android:layout_toEndOf="@+id/orderNolabel"
+        android:textSize="20sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total amount: "
+            android:id="@+id/totalAmountLabel"
+            android:layout_toStartOf="@+id/amountPaid"
+            android:layout_alignTop="@+id/orderNo"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/totalAmountLabel"
+            android:id="@+id/amountPaid"
+            android:textSize="20dp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Address:"
+        android:id="@+id/addressLabel"
+        android:textStyle="bold"
+        android:layout_marginTop="2dp"
+        android:layout_alignStart="@+id/orderNolabel"
+        android:layout_below="@+id/orderNolabel"
+        android:layout_marginLeft="5dp"
+        android:textSize="18sp"
+        android:textColor="#000"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:id="@+id/address"
+        android:layout_below="@+id/addressLabel"
+        android:textSize="20dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time Of Delivery"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:layout_marginTop="2dp"
+        android:layout_below="@+id/address"
+        android:textStyle="bold"
+        android:id="@+id/timeOfDileveryLabel"
+        android:layout_marginLeft="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:id="@+id/timeOfDilevery"
+        android:layout_below="@+id/timeOfDileveryLabel"
+        android:textSize="20dp"
+        android:layout_marginLeft="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/amountPaidLabel"
+            android:text="Amount Paid: "
+            android:textSize="18sp"
+            android:layout_marginTop="2dp"
+            android:layout_alignStart="@+id/timeOfDileveryLabel"
+            android:layout_below="@id/timeOfDilevery"
+            android:textStyle="bold"
+            android:textColor="#000"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="3dp"
+            android:layout_below="@+id/timeOfDileveryLabel"
+            android:layout_toEndOf="@+id/amountPaidLabel">
+            <EditText
+                android:id="@+id/amountPaidET"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:fontFamily="sans-serif"
+                android:scrollbars="vertical"
+                android:inputType="phone">
+            </EditText>
+        </com.google.android.material.textfield.TextInputLayout>
+    </RelativeLayout>
+
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Comments:"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="500"
+        >
+        <EditText
+            android:id="@+id/comments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:fontFamily="sans-serif"
+            android:scrollbars="vertical"
+            android:textColor="#000"
+            android:hint="Write a comment"
+            android:inputType="textMultiLine"
+            android:maxLines="1">
+        </EditText>
+    </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Client Signature:"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <android.gesture.GestureOverlayView
+
+            android:id="@+id/signaturePad"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="130dp"
+            android:background="#ffff"
+            android:eventsInterceptionEnabled="false"
+            android:fadeEnabled="false"
+            android:fadeOffset="10000000"
+            android:gestureColor="#000000"
+            android:gestureStrokeWidth="2"
+            android:gestureStrokeLengthThreshold="0.1"
+            android:gestureStrokeType="multiple"
+            android:alwaysDrawnWithCache="true"
+            android:orientation="vertical" >
+
+        </android.gesture.GestureOverlayView>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/clear"
+            android:src="@drawable/clear"
+            android:background="@drawable/circlebutton"
+            android:layout_alignEnd="@+id/signaturePad" />
+    </RelativeLayout>
+
+
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/colorAccent"
+        android:paddingLeft="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:paddingRight="100dp"
+        android:text="Submit"
+        android:layout_marginBottom="4dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:textColor="#ffff" />
+
+</LinearLayout>
+</com.example.khushbakht.grocerjin.CustomScrollView>

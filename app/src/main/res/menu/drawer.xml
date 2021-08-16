@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+
+
+
+        <item
+            android:id="@+id/myOrders"
+            android:checked="false"
+            android:icon="@drawable/orders"
+            android:title="@string/orders" />
+
+        <item
+            android:id="@+id/notifications"
+            android:checked="false"
+            android:icon="@drawable/notifications"
+            android:title="@string/notifications" />
+
+        <item
+            android:id="@+id/profile"
+            android:checked="false"
+            android:icon="@drawable/profile"
+            android:title="@string/profile" />
+
+        <item
+            android:id="@+id/logout"
+            android:checked="false"
+            android:icon="@drawable/logout"
+            android:title="@string/logout" />
+
+
+    </group>
+
+</menu>

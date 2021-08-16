@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.khushbakht.grocerjin.activities.SuccessfulDelivery">
+
+
+    <include
+        layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Order no: "
+            android:layout_marginTop="5dp"
+            android:textColor="#000"
+            android:id="@+id/orderNolabel"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="#000000"
+            android:id="@+id/orderNo"
+            android:layout_toEndOf="@+id/orderNolabel"
+            android:textSize="20sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total amount: "
+            android:id="@+id/totalAmountLabel"
+            android:layout_toStartOf="@+id/amountPaid"
+            android:layout_alignTop="@+id/orderNo"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_alignTop="@+id/totalAmountLabel"
+            android:id="@+id/amountPaid"
+            android:textSize="20dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address:"
+            android:id="@+id/addressLabel"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_alignStart="@+id/orderNolabel"
+            android:layout_below="@+id/orderNolabel"
+            android:layout_marginLeft="5dp"
+            android:textSize="18sp"
+            android:textColor="#000"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:id="@+id/address"
+            android:layout_below="@+id/addressLabel"
+            android:textSize="20dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time Of Delivery"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:layout_below="@+id/address"
+            android:textStyle="bold"
+            android:id="@+id/timeOfDileveryLabel"
+            android:layout_marginLeft="5dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:id="@+id/timeOfDilevery"
+            android:layout_below="@+id/timeOfDileveryLabel"
+            android:textSize="20dp"
+            android:layout_marginLeft="5dp"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Record your feedback below"
+        android:textColor="#000000"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="left"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="86dp">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
+
+            <ImageButton
+                android:id="@+id/chat_send_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@android:color/transparent"
+                android:enabled="false"
+                android:scaleType="centerInside" />
+
+            <com.example.khushbakht.grocerjin.audio.FrameLayoutFixed
+                android:id="@+id/record_panel"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="2dp"
+                android:background="#ffffff"
+                android:visibility="visible" >
+
+                <LinearLayout
+                    android:id="@+id/slideText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="27dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="1dp"
+                        android:src="@drawable/slidearrow" />
+
+                    <TextView
+                        android:id="@+id/slideToCancelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="6dp"
+                        android:textColor="#999999"
+                        android:textSize="12dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="#ffffffff"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="1dp"
+                        android:src="@drawable/rec" />
+
+                    <TextView
+                        android:id="@+id/recording_time_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:text="00:00"
+                        android:textColor="#4d4c4b"
+                        android:textSize="16dp" />
+                </LinearLayout>
+            </com.example.khushbakht.grocerjin.audio.FrameLayoutFixed>
+
+            <ImageButton
+                android:id="@+id/chat_audio_send_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/white"
+                android:enabled="false"
+                android:paddingRight="4dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/mic_button_state" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="*Touching this button will start recording of the complaints in client's voice"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="10dp"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Comments:"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="500"
+        >
+        <EditText
+            android:id="@+id/comments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="Write a comment"
+            android:scrollbars="vertical"
+            android:textColor="#000"
+            android:fontFamily="sans-serif"
+            android:inputType="textMultiLine"
+            android:maxLines="3">
+        </EditText>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/disputedbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/colorAccent"
+        android:paddingLeft="100dp"
+        android:paddingRight="100dp"
+        android:text="Submit"
+        android:layout_marginBottom="4dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:textColor="#ffff" />
+
+
+
+</LinearLayout>
+</ScrollView>

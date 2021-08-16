@@ -1,0 +1,43 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/iconsColor</item>
+        <item name="colorPrimaryDark">@color/iconsColor</item>
+        <item name="colorAccent">@color/iconsColor</item>
+        <item name="android:typeface">serif</item>
+        <item name="spinnerStyle">@style/spinner_style</item>
+        <item name="colorControlNormal">@color/black</item>
+
+    </style>
+
+    <style name="AppTheme_Dark_Dialog">ProgressBar
+    <item name="color">#5b4550</item>
+    </style>
+    <style name="spinner_style" parent="Base.Widget.AppCompat.Spinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/spinner_border</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:popupBackground">#DFFFFFFF</item>
+    </style>
+    <style name="menu_item_style">
+        <item name="android:fontFamily">serif</item>
+    </style>
+    <style name="TextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+    <style name="ButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">serif</item>
+    </style>
+    <style name="EditTextStyle" parent="android:Widget.EditText">
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+</resources>

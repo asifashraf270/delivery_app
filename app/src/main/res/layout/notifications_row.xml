@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="3dp"
+    android:layout_marginBottom="5dp"
+
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/notifyCard"
+        android:weightSum="10">
+
+        <TextView
+            android:id="@+id/notify_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:minHeight="50dp"
+            android:padding="10dp"
+            android:textStyle="normal"
+            />
+
+        <TextView
+            android:id="@+id/notify_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="3"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:textAlignment="viewEnd"
+            tools:ignore="RtlCompat" />
+
+    </LinearLayout>
+    >
+
+</androidx.cardview.widget.CardView>

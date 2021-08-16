@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Delivery Truck Parts</string>
+    <string name="openDrawer">openDrawer</string>
+    <string name="closeDrawer">closeDrawer</string>
+    <string name="orders">Orders</string>
+    <string name="notifications">Notifications</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="disable_draw">notification</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="ok_button"><b>Ok</b></string>
+    <string name="cancel_button"><b>cancel</b></string>
+    <string name="turn_on"><b>Turn on</b></string>
+    <string name="yes"><b>Yes</b></string>
+    <string name="no"><b>No</b></string>
+    <string name="login">Biggest Online Grocery</string>
+    <string name="loginTxt">Login</string>
+    <string name="baseURL">http://188.166.56.243/grocergini/api/</string>
+    <string name="welcome">Welcome</string>
+    <string name="signInContinue">Sign in to Continue!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
