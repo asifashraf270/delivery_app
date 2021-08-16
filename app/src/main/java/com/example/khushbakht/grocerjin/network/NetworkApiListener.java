@@ -3,6 +3,7 @@ package com.example.khushbakht.grocerjin.network;
 import com.example.khushbakht.grocerjin.model.OrderList.OrderList;
 import com.example.khushbakht.grocerjin.model.Postdelivery.Post;
 import com.example.khushbakht.grocerjin.model.productList.Product;
+import com.example.khushbakht.grocerjin.responseentity.OrderDetailResponse;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public abstract class NetworkApiListener {
     public void onResponseChangeStatus(final String statusMessage){}
     public void onResponseError(final String statusMessageError){}
     public void onResponse(List<OrderList> userListResponses) {}
-    public void onItemResponse(List<Product> ProductListResponses){}
+    public void onItemResponse(OrderDetailResponse ProductListResponses){}
 
     public void onResponse(final String statusMessage,final int code){}
 }

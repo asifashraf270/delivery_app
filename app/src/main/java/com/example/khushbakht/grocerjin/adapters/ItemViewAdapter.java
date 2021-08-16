@@ -2,8 +2,10 @@ package com.example.khushbakht.grocerjin.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.example.khushbakht.grocerjin.listeners.OnItemClickListener;
 import com.example.khushbakht.grocerjin.R;
 import com.example.khushbakht.grocerjin.model.productList.Product;
+import com.example.khushbakht.grocerjin.responseentity.ProductDetailItem;
 import com.example.khushbakht.grocerjin.viewHolders.ItemTouchHelperViewHolder;
 import com.squareup.picasso.Picasso;
 
@@ -25,16 +28,16 @@ import java.util.List;
 
 public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.MyViewHolder> implements ItemTouchHelperAdapter {
     // private ArrayList<Data> dataset;
-    public List<Product> responseList;
+    public List<ProductDetailItem> responseList;
     public OnItemClickListener listener;
     public Context context;
     public int rowLayout;
 
-    public List<Product> getResponseList() {
+    public List<ProductDetailItem> getResponseList() {
         return responseList;
     }
 
-    public void setResponseList(List<Product> responseList) {
+    public void setResponseList(List<ProductDetailItem> responseList) {
         this.responseList = responseList;
     }
 
@@ -71,7 +74,7 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.MyView
         // in my view holder
     }
 
-    public ItemViewAdapter(Context context,List<Product> responseList) {
+    public ItemViewAdapter(Context context, List<ProductDetailItem> responseList) {
         this.context = context;
         this.responseList = responseList;
     }
@@ -89,14 +92,15 @@ public class ItemViewAdapter extends RecyclerView.Adapter<ItemViewAdapter.MyView
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
-        Product productList = responseList.get(position);
+        ProductDetailItem productList = responseList.get(position);
 
-        holder.title.setText(productList.getPTitle());
-        holder.price.setText(productList.getP_actualPrice()+" Rs");
-        holder.quantity.setText(productList.getPQuantity() + " (Est.weight: " + productList.getP_estimatedWeight() +" kg, Act.weight: " + productList.getP_estimatedWeight() + " kg)");
+        holder.title.setText(productList.getOrderProductName());
+        holder.price.setText(productList.getOrderProductPrice() + " Rs");
+        holder.quantity.setText(productList.getOrderProductQuantity() + " (Est.weight: ");
+        Picasso.with(context).load("https://dk.eleget.net/truckpart_api/uploads/product/" + productList.productImage).placeholder(R.mipmap.ic_launcher).into(holder.productImage);
 //        holder.notes.setText(productList.getPNotes());
-        Picasso.with(context).load("http://meatonwheel.com/api/"+productList.getPImage()).placeholder(R.mipmap.ic_launcher).into(holder.productImage);
-        //holder.productImage.setImageURI(productList.getPImage());
+        /*  Picasso.with(context).load("http://meatonwheel.com/api/"+productList.getPImage()).placeholder(R.mipmap.ic_launcher).into(holder.productImage);
+         */ //holder.productImage.setImageURI(productList.getPImage());
 
 
     }

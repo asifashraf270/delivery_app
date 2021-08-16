@@ -10,8 +10,11 @@ import android.graphics.Bitmap;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -34,7 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class SuccessfulDelivery extends AppCompatActivity implements  GestureOverlayView.OnGestureListener {
+public class SuccessfulDelivery extends AppCompatActivity implements GestureOverlayView.OnGestureListener {
     private SuccessfulLister deliveryLister = new SuccessfulLister();
     private NetworkApiController mNetworkApiController = null;
     private Context context = null;
@@ -98,25 +101,29 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
         amountPaidET.setText(amountPaid);
         addressText.setText(address);
         gestureView.addOnGestureListener(this);
-        String date=timeOfDelivery;
-        SimpleDateFormat spf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date newDate= null;
+        String date = timeOfDelivery;
+        SimpleDateFormat spf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+        Date newDate = null;
         try {
             newDate = spf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        spf= new SimpleDateFormat("MMM dd, yyyy   hh:mm");
-        if (newDate!= null) {
+        spf = new SimpleDateFormat("MMM dd, yyyy   hh:mm");
+        if (newDate != null) {
             date = spf.format(newDate);
         }
-        timeOfdelivery.setText(date);        mNetworkApiController = NetworkApiController.getInstance(getContext());
+        timeOfdelivery.setText(date);
+        mNetworkApiController = NetworkApiController.getInstance(getContext());
         submit = (Button) findViewById(R.id.button);
         comments.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -136,7 +143,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
             bm = Bitmap.createBitmap(gestureView.getDrawingCache());
             ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
             File directory = contextWrapper.getDir(getFilesDir().getName(), Context.MODE_PRIVATE);
-            file =  new File(directory,"signature.png");
+            file = new File(getExternalFilesDir(null), "signature.png");
             file.createNewFile();
             String data = "TEST DATA";
             FileOutputStream fos = new FileOutputStream("signature.png", true); // save
@@ -146,8 +153,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
             fos.close();
 //            MediaStore.Images.Media.insertImage(getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             Log.v("Gestures", e.getMessage());
 
@@ -182,7 +188,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
             @Override
             public void onClick(View v) {
                 saveSig(v);
-                if (orderId!= null && file!=null&& itemSelected!=null) {
+                if (orderId != null && file != null && itemSelected != null) {
                     mNetworkApiController.sendPost(amountPaidET.getText().toString(), orderId, file, comments.getText().toString(), itemSelected);
                     pd = new ProgressDialog(SuccessfulDelivery.this);
                     pd.setMessage("Please wait");
@@ -205,6 +211,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
     public void setContext(SuccessfulDelivery context) {
         this.context = context;
     }
+
     public Context getContext() {
         return context;
     }
@@ -226,7 +233,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
         @Override
         public void onResponse(String statusMessage, int statusCode) {
             super.onResponse(statusMessage, statusCode);
-            if(pd.isShowing()) {
+            if (pd.isShowing()) {
                 pd.dismiss();
                 pd = null;
             }
@@ -234,7 +241,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
 //                mNetworkApiController.changeStatus(orderId, itemSelected);
                 dialog = new AlertDialog.Builder(SuccessfulDelivery.this);
                 dialog.setMessage(statusMessage);
-                dialog.setNegativeButton(Html.fromHtml("<b>"+getString(R.string.ok_button)+"</b>"),
+                dialog.setNegativeButton(Html.fromHtml("<b>" + getString(R.string.ok_button) + "</b>"),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -251,6 +258,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
             }
 
         }
+
         @Override
         public void onResponseError(String statusMessage) {
             super.onResponseError(statusMessage);
@@ -261,7 +269,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
 //            }
             dialog = new AlertDialog.Builder(SuccessfulDelivery.this);
             dialog.setMessage(statusMessage);
-            dialog.setNegativeButton(Html.fromHtml("<b>"+getString(R.string.ok_button)+"</b>"),
+            dialog.setNegativeButton(Html.fromHtml("<b>" + getString(R.string.ok_button) + "</b>"),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -270,6 +278,7 @@ public class SuccessfulDelivery extends AppCompatActivity implements  GestureOve
             dialog.show();
         }
     }
+
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, OrderDetail.class);

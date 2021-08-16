@@ -8,10 +8,14 @@ import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.os.Vibrator;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -111,9 +115,12 @@ public class DisputeDelivery extends AppCompatActivity {
         addressText.setText(address);
         comments.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -122,16 +129,16 @@ public class DisputeDelivery extends AppCompatActivity {
                 }
             }
         });
-        String date=timeOfDelivery;
-        SimpleDateFormat spf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date newDate= null;
+        String date = timeOfDelivery;
+        SimpleDateFormat spf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+        Date newDate = null;
         try {
             newDate = spf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        spf= new SimpleDateFormat("MMM dd, yyyy   hh:mm");
-        if (newDate!= null) {
+        spf = new SimpleDateFormat("MMM dd, yyyy   hh:mm");
+        if (newDate != null) {
             date = spf.format(newDate);
         }
         timeOfdelivery.setText(date);
@@ -175,12 +182,12 @@ public class DisputeDelivery extends AppCompatActivity {
                     float x = motionEvent.getX();
                     if (x < -distCanMove) {
 
-                           file = null;
+                        file = null;
 
-                            if (timer != null) {
-                                timer.cancel();
-                            }
-                            recordTimeText.setText("00:00");
+                        if (timer != null) {
+                            timer.cancel();
+                        }
+                        recordTimeText.setText("00:00");
 
                         // stopRecording(false);
                     }
@@ -228,13 +235,12 @@ public class DisputeDelivery extends AppCompatActivity {
 
     String filepath;
 
-    private String getFilename()
-    {
-        filepath = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".mp3";
+    private String getFilename() {
+        filepath = getExternalFilesDir(null) + "/" + System.currentTimeMillis() + ".mp3";
 
         file = new File(filepath);
 
-        if(!file.exists()){
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -242,7 +248,7 @@ public class DisputeDelivery extends AppCompatActivity {
             }
         }
 
-        return (file.getAbsolutePath() );
+        return (file.getAbsolutePath());
     }
 
     public void startRecording() throws IOException {
@@ -262,6 +268,7 @@ public class DisputeDelivery extends AppCompatActivity {
 
 
     ProgressDialog pd;
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -270,19 +277,18 @@ public class DisputeDelivery extends AppCompatActivity {
         disputedSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (orderId!= null && file!=null && itemSelected!=null) {
-                    mNetworkApiController.disputedCase(orderId, file, comments.getText().toString(), itemSelected);
+                if (orderId != null && file != null && itemSelected != null) {
+                    mNetworkApiController.sendPost("", orderId, file, comments.getText().toString(), itemSelected);
                     pd = new ProgressDialog(DisputeDelivery.this);
                     pd.setMessage("Please wait");
                     pd.show();
                 }
-                if (orderId!= null && file==null && itemSelected!=null) {
+                if (orderId != null && file == null && itemSelected != null) {
                     mNetworkApiController.undelivered(orderId, comments.getText().toString(), itemSelected);
                     pd = new ProgressDialog(DisputeDelivery.this);
                     pd.setMessage("Please wait");
                     pd.show();
                 }
-
 
 
 //                if (comments.getText().toString().isEmpty())
@@ -296,7 +302,6 @@ public class DisputeDelivery extends AppCompatActivity {
 //                                }
 //                            });dialog.show();
 //                }
-
 
 
             }
@@ -317,7 +322,8 @@ public class DisputeDelivery extends AppCompatActivity {
         startRecording();
         Log.i("Imran", "Shafi");
     }
-    public void stopRecording() throws IllegalStateException {
+
+    public void stopRecording() throws IllegalStateException, IOException {
         if (recorder != null) {
             recorder.stop();
             recorder.reset();
@@ -393,6 +399,7 @@ public class DisputeDelivery extends AppCompatActivity {
     public void setContext(DisputeDelivery context) {
         this.context = context;
     }
+
     public Context getContext() {
         return context;
     }
@@ -417,11 +424,10 @@ public class DisputeDelivery extends AppCompatActivity {
             if (pd.isShowing()) {
                 pd.dismiss();
             }
-            if(statusCode == 200)
-            {
+            if (statusCode == 200) {
                 dialog = new AlertDialog.Builder(DisputeDelivery.this);
                 dialog.setMessage(statusMessage);
-                dialog.setNegativeButton(Html.fromHtml("<b>"+getString(R.string.ok_button)+"</b>"),
+                dialog.setNegativeButton(Html.fromHtml("<b>" + getString(R.string.ok_button) + "</b>"),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -447,15 +453,17 @@ public class DisputeDelivery extends AppCompatActivity {
             }
             dialog = new AlertDialog.Builder(DisputeDelivery.this);
             dialog.setMessage(statusMessageError);
-            dialog.setNegativeButton(Html.fromHtml("<b>"+getString(R.string.ok_button)+"</b>"),
+            dialog.setNegativeButton(Html.fromHtml("<b>" + getString(R.string.ok_button) + "</b>"),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
 //                                mNetworkApiController.changeStatus(orderId,itemSelected);
                         }
                     });
-            dialog.show();        }
+            dialog.show();
+        }
     }
+
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, OrderDetail.class);

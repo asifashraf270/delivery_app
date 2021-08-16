@@ -2,13 +2,17 @@ package com.example.khushbakht.grocerjin.activities;
 
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,6 +25,7 @@ import com.example.khushbakht.grocerjin.adapters.ItemViewAdapter;
 import com.example.khushbakht.grocerjin.controller.NetworkApiController;
 import com.example.khushbakht.grocerjin.model.productList.Product;
 import com.example.khushbakht.grocerjin.network.NetworkApiListener;
+import com.example.khushbakht.grocerjin.responseentity.OrderDetailResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +33,7 @@ import java.util.List;
 public class ItemView extends AppCompatActivity {
     ItemLister loginLister = new ItemLister();
 
-    ArrayList<Product> data= new ArrayList<>();
+    ArrayList<Product> data = new ArrayList<>();
     private NetworkApiController mNetworkApiController = null;
     private Context context = null;
     public static final String TAG = MainActivity.class.getCanonicalName();
@@ -40,6 +45,7 @@ public class ItemView extends AppCompatActivity {
     TextView amount, delivery_charges, total;
     ImageButton refresh;
     String orderId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,26 +75,25 @@ public class ItemView extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
+
     @Override
     public void onStart() {
         super.onStart();
 
         refresh.setVisibility(View.GONE);
-        amount.setText("Rs: "+NetworkApiController.dataConroller.getOrderList().get_amount());
-        total.setText("Rs: "+NetworkApiController.dataConroller.getOrderList().getAmount());
-        delivery_charges.setText("Rs: "+NetworkApiController.dataConroller.getOrderList().getDelivery_charges());
+        amount.setText("Rs: " + NetworkApiController.dataConroller.getOrderList().get_amount());
+        total.setText("Rs: " + NetworkApiController.dataConroller.getOrderList().getAmount());
+        delivery_charges.setText("Rs: " + NetworkApiController.dataConroller.getOrderList().getDelivery_charges());
         mNetworkApiController = NetworkApiController.getInstance(context);
         mNetworkApiController.getItems(orderId);
 
     }
 
-    public Context getContext()
-    {
+    public Context getContext() {
         return context;
     }
 
-    public void setContext(Context context)
-    {
+    public void setContext(Context context) {
         this.context = context;
     }
 
@@ -108,22 +113,22 @@ public class ItemView extends AppCompatActivity {
     }
 
 
-    private class ItemLister extends NetworkApiListener{
+    private class ItemLister extends NetworkApiListener {
 
         @Override
         public void onResponseError(String statusMessageError) {
             super.onResponseError(statusMessageError);
-            Toast.makeText(ItemView.this,statusMessageError, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ItemView.this, statusMessageError, Toast.LENGTH_SHORT).show();
 
         }
 
 
         @Override
-        public void onItemResponse(List<Product> itemListResponses) {
+        public void onItemResponse(OrderDetailResponse itemListResponses) {
             super.onItemResponse(itemListResponses);
 
 
-            adapter = new ItemViewAdapter(context,itemListResponses);
+            adapter = new ItemViewAdapter(context, itemListResponses.orderDetail.getProductDetail());
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 

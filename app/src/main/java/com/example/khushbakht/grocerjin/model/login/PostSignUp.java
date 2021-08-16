@@ -8,10 +8,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class PostSignUp {
 
-    @SerializedName("username")
+    @SerializedName("driver_email")
     private String email = "";
 
-    @SerializedName("password")
+    @SerializedName("driver_password")
     private String password = "";
 
 

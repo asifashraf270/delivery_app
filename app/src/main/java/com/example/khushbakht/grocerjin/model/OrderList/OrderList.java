@@ -17,7 +17,7 @@ public class OrderList implements Serializable {
     @SerializedName("order_tax")
     public String orderTax;
     @SerializedName("addedOn")
-    private String dateTime ;
+    private String dateTime;
     @SerializedName("latitude")
     private String latitude = "";
     @SerializedName("longitude")
@@ -30,6 +30,8 @@ public class OrderList implements Serializable {
     public Integer driverId;
     @SerializedName("customer_name")
     public String customerName;
+    @SerializedName("customer_phone")
+    public String customerPhoneNo;
 
     public String get_amount() {
         return _amount;
@@ -61,6 +63,10 @@ public class OrderList implements Serializable {
     private String totalItems = "";
     @SerializedName("order_status_name")
     public String orderStatusName;
+    @SerializedName("order_note")
+    public String orderNote;
+    @SerializedName("payment_method_id")
+    public Integer paymentMethod;
 
 
     public String getTotalItems() {

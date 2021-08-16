@@ -412,6 +412,13 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                 dialog.show();
             }
         }
+
+        @Override
+        public void onResponseError(String statusMessageError) {
+            super.onResponseError(statusMessageError);
+            pd.dismiss();
+            Toast.makeText(Login.this, statusMessageError, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

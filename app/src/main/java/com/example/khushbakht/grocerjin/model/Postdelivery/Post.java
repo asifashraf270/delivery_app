@@ -6,9 +6,12 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Post implements Serializable{
-
-    public String getOrderId() {
+public class Post implements Serializable {
+    @SerializedName("status_id")
+    public int statusId;
+    @SerializedName("reason")
+    public String reason;
+   /* public String getOrderId() {
         return orderId;
     }
 
@@ -49,6 +52,6 @@ public class Post implements Serializable{
 
     public void setDeliveryBoyNotes(String deliveryBoyNotes) {
         this.deliveryBoyNotes = deliveryBoyNotes;
-    }
+    }*/
 
 }

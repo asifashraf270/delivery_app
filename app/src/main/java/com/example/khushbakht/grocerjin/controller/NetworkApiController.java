@@ -9,6 +9,7 @@ import android.util.Log;
 import com.example.khushbakht.grocerjin.AppConstant;
 import com.example.khushbakht.grocerjin.Controller;
 import com.example.khushbakht.grocerjin.RememberCredentials;
+import com.example.khushbakht.grocerjin.activities.Login;
 import com.example.khushbakht.grocerjin.adapters.CustomAdapter;
 import com.example.khushbakht.grocerjin.classes.DataPass;
 import com.example.khushbakht.grocerjin.firebase.SaveFirebaseTokenModel;
@@ -24,6 +25,7 @@ import com.example.khushbakht.grocerjin.model.login.response.LoginData;
 import com.example.khushbakht.grocerjin.model.pickOrder.PickModel;
 import com.example.khushbakht.grocerjin.model.pickOrder.PickResponse;
 import com.example.khushbakht.grocerjin.model.pickOrder.PickStatus;
+import com.example.khushbakht.grocerjin.model.productList.GeneralResponseModel;
 import com.example.khushbakht.grocerjin.model.productList.ProductList;
 import com.example.khushbakht.grocerjin.model.productList.ProductStatus;
 import com.example.khushbakht.grocerjin.model.productList.ProductsResponse;
@@ -33,6 +35,8 @@ import com.example.khushbakht.grocerjin.model.profile.ProfileResponse;
 import com.example.khushbakht.grocerjin.network.NetworkApiListener;
 import com.example.khushbakht.grocerjin.model.login.response.StatusResponse;
 import com.example.khushbakht.grocerjin.network.NetworkClient;
+import com.example.khushbakht.grocerjin.responseentity.OrderDetailResponseModel;
+import com.example.khushbakht.grocerjin.responseentity.login.LoginResponse;
 import com.example.khushbakht.grocerjin.utility.HelperMethod;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -170,35 +174,39 @@ public class NetworkApiController implements Runnable {
                 postSignUp.setPassword(password);
                 sharedPreferences = mContext.getSharedPreferences(RememberCredentials.SharedPreferenceName, Context.MODE_PRIVATE);
                 RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (HelperMethod.convertJavaToJson(postSignUp).toString()));
-
-
-                Call<LoginData> call = mNetworkClient.getNetworkWebService().login(body);
-                call.enqueue(new Callback<LoginData>() {
+                Call<LoginResponse> call = mNetworkClient.getNetworkWebService().driverLogin(postSignUp);
+                call.enqueue(new Callback<LoginResponse>() {
                     @Override
-                    public void onResponse(Call<LoginData> call, Response<LoginData> response) {
+                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                         if (response.isSuccessful() && response != null) {
-                            loginData = response.body();
-                            Status status = loginData.getStatus();
+                            /* loginData = response.body();*/
+                            /*  Status status = loginData.getStatus();
+                             */
 
-
-                            if (status.getCode() == 200) {
-                                if (loginData.getResponse().getLocation_name() != null) {
+                            if (response.body().getStatusCode() == 200) {
+                                sharedPreferences.edit().putString(AppConstant.DRIVERID, response.body().getResponse().getDriverDetail().getDriverId() + "").commit();
+                                sharedPreferences.edit().putString(AppConstant.TOKEN, response.body().getResponse().getToken()).commit();
+                              /*  if (loginData.getResponse().getLocation_name() != null) {
                                     sharedPreferences.edit().putString(AppConstant.DRIVERID, loginData.getResponse().getEId()).commit();
 //                                    FirebaseMessaging.getInstance().subscribeToTopic(loginData.getResponse().getPush_name());
-                                }
+                                }*/
                                 for (NetworkApiListener l : mListeners) {
-                                    l.onResponseLogin(status.getMessage(), status.getCode());
+                                    l.onResponseLogin(response.body().getMessage(), response.body().getStatusCode());
                                 }
                             } else {
                                 for (NetworkApiListener l : mListeners) {
-                                    l.onResponseLogin(status.getMessage(), status.getCode());
+                                    l.onResponseLogin(response.body().getMessage(), response.body().getStatusCode());
                                 }
+                            }
+                        } else {
+                            for (NetworkApiListener l : mListeners) {
+                                l.onResponseError(response.message());
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<LoginData> call, Throwable t) {
+                    public void onFailure(Call<LoginResponse> call, Throwable t) {
                         for (NetworkApiListener l : mListeners) {
                             l.onResponseError(t.getMessage());
                         }
@@ -217,7 +225,7 @@ public class NetworkApiController implements Runnable {
                 SaveFirebaseTokenModel model = new SaveFirebaseTokenModel();
                 model.deviceToken = token;
                 model.driver_id = Integer.parseInt(sharedPreferences.getString(AppConstant.DRIVERID, "0"));
-                Call<ResponseBody> responseBodyCall = mNetworkClient.getNetworkWebService().saveToken(model, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjkzNDc0MDksImRhdGEiOlt7ImV2X2NoYXJnaW5nX3NpdGVfc3RhZmZfaWQiOjEsImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEsInVzZXJfYWNjb3VudF9pZCI6Miwic3RhcnRfZGF0ZV90aW1lIjoiMjAyMC0wNy0wMVQwMDowMDowMC4wMDBaIiwiZW5kX2RhdGVfdGltZSI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInVzZXJBY2NvdW50Ijp7InVzZXJfYWNjb3VudF9pZCI6MiwidXNlcl9uYW1lIjoiam9oYW5zdGF0aW9ubWdyIiwiZW1haWxfYWRkcmVzcyI6ImpvaGFuQGFiYy5jb20iLCJwZXJzb25faWQiOjIsInBhc3N3b3JkIjoiQCNAQEAjIiwidXNlcl9yb2xlX2NvZGUiOiJTTSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJtb2JpbGVfcGhvbmVfbnVtYmVyIjpudWxsLCJwZXJzb24iOnsicGVyc29uX2lkIjoyLCJmaXJzdF9uYW1lIjoiSm9oYW4iLCJsYXN0X25hbWUiOiJTdGF0aW9uTWFuYWdlciIsInRpdGxlX2NvZGUiOiJNUiIsImRhdGVfb2ZfYmlydGgiOiIxOTc0LTAxLTAxIiwic2V4X2NvZGUiOiJNIiwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInNleFJlZiI6eyJzZXhfY29kZSI6Ik0iLCJuYW1lIjoiTWFsZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfSwicGVyc29uQWRkcmVzcyI6eyJwZXJzb25fYWRkcmVzc19pZCI6MiwiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwicGVyc29uX2lkIjoyLCJhZGRyZXNzX2lkIjoxLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbCwiYWRkcmVzc1R5cGVSZWYiOnsiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwibmFtZSI6Ik9mZmljZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfX19LCJ1c2VyUm9sZVJlZiI6eyJ1c2VyX3JvbGVfY29kZSI6IlNNIiwibmFtZSI6IlN0YXRpb24gTWFuYWdlciIsImNyZWF0aW9uX2RhdGVfdGltZSI6IjIwMjAtMDctMDFUMDA6MDA6MDAuMDAwWiIsInBlcm1pc3Npb24iOiI_Pz8_IiwidXNlcl9yb2xlX2dyb3VwX2NvZGUiOiJDUyIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJ1c2VyUm9sZUdyb3VwUmVmIjp7InVzZXJfcm9sZV9ncm91cF9jb2RlIjoiQ1MiLCJuYW1lIjoiQ2hhcmdpbmcgU2l0ZSIsImVuZHBvaW50IjoiYXV0aGVudGljYXRlX2V2X2NoYXJnaW5nX3NpdGVfc3RhZmYiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH19fSwidXNlY2FzZXNQZXJtaXR0ZWQiOlt7InVzZXJfcGVybWlzc2lvbl91c2VjYXNlX2lkIjoxLCJuYW1lIjoiU2V0dXAgUHJpY2VzIiwiZGVzY3JpcHRpb24iOiJNYWtlIGNoYW5nZXMgdG8gQ2hhcmdlIEl0ZXNtIiwidXJsX3BhdGgiOiIvY2hhcmdlX2l0ZW0iLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH0seyJ1c2VyX3Blcm1pc3Npb25fdXNlY2FzZV9pZCI6MiwibmFtZSI6IlNldHVwIFBsYW5zL0J1bmRsZXMiLCJkZXNjcmlwdGlvbiI6Ik1ha2UgY2hhbmdlcyB0byBQbGFucyBhbmQgQnVuZGxlcyIsInVybF9wYXRoIjoiL2J1bmRsZV9wcmljZXMiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH1dLCJldkNoYXJnaW5nU2l0ZXMiOlt7ImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEsIm5hbWUiOiJDaGFyZ2luZyBTaXRlIFBsYXphIiwiZGVzY3JpcHRpb24iOiJDaGFyZ2luZyBTaXRlIFBsYXphIGFuZCBTaG9wcGluZyBNYWxsIiwiZ3BzX2xhdGl0dWRlIjoiNTkuMzI2MTQyIiwiZ3BzX2xvbmdpdHVkZSI6IjE3Ljk4MjA1MyIsImRlZmF1bHRfY3VycmVuY3lfaWQiOjEsInZhdF9pZCI6MSwiYWRkcmVzc19pZCI6MiwiZXZfY2hhcmdpbmdfc2l0ZV9ncm91cF9pZCI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGx9XX0seyJldl9jaGFyZ2luZ19zaXRlX3N0YWZmX2lkIjoyLCJldl9jaGFyZ2luZ19zaXRlX2lkIjoxMjksInVzZXJfYWNjb3VudF9pZCI6Miwic3RhcnRfZGF0ZV90aW1lIjoiMjAyMC0wNy0wMVQwMDowMDowMC4wMDBaIiwiZW5kX2RhdGVfdGltZSI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInVzZXJBY2NvdW50Ijp7InVzZXJfYWNjb3VudF9pZCI6MiwidXNlcl9uYW1lIjoiam9oYW5zdGF0aW9ubWdyIiwiZW1haWxfYWRkcmVzcyI6ImpvaGFuQGFiYy5jb20iLCJwZXJzb25faWQiOjIsInBhc3N3b3JkIjoiQCNAQEAjIiwidXNlcl9yb2xlX2NvZGUiOiJTTSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJtb2JpbGVfcGhvbmVfbnVtYmVyIjpudWxsLCJwZXJzb24iOnsicGVyc29uX2lkIjoyLCJmaXJzdF9uYW1lIjoiSm9oYW4iLCJsYXN0X25hbWUiOiJTdGF0aW9uTWFuYWdlciIsInRpdGxlX2NvZGUiOiJNUiIsImRhdGVfb2ZfYmlydGgiOiIxOTc0LTAxLTAxIiwic2V4X2NvZGUiOiJNIiwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInNleFJlZiI6eyJzZXhfY29kZSI6Ik0iLCJuYW1lIjoiTWFsZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfSwicGVyc29uQWRkcmVzcyI6eyJwZXJzb25fYWRkcmVzc19pZCI6MiwiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwicGVyc29uX2lkIjoyLCJhZGRyZXNzX2lkIjoxLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbCwiYWRkcmVzc1R5cGVSZWYiOnsiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwibmFtZSI6Ik9mZmljZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfX19LCJ1c2VyUm9sZVJlZiI6eyJ1c2VyX3JvbGVfY29kZSI6IlNNIiwibmFtZSI6IlN0YXRpb24gTWFuYWdlciIsImNyZWF0aW9uX2RhdGVfdGltZSI6IjIwMjAtMDctMDFUMDA6MDA6MDAuMDAwWiIsInBlcm1pc3Npb24iOiI_Pz8_IiwidXNlcl9yb2xlX2dyb3VwX2NvZGUiOiJDUyIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJ1c2VyUm9sZUdyb3VwUmVmIjp7InVzZXJfcm9sZV9ncm91cF9jb2RlIjoiQ1MiLCJuYW1lIjoiQ2hhcmdpbmcgU2l0ZSIsImVuZHBvaW50IjoiYXV0aGVudGljYXRlX2V2X2NoYXJnaW5nX3NpdGVfc3RhZmYiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH19fSwidXNlY2FzZXNQZXJtaXR0ZWQiOlt7InVzZXJfcGVybWlzc2lvbl91c2VjYXNlX2lkIjoxLCJuYW1lIjoiU2V0dXAgUHJpY2VzIiwiZGVzY3JpcHRpb24iOiJNYWtlIGNoYW5nZXMgdG8gQ2hhcmdlIEl0ZXNtIiwidXJsX3BhdGgiOiIvY2hhcmdlX2l0ZW0iLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH0seyJ1c2VyX3Blcm1pc3Npb25fdXNlY2FzZV9pZCI6MiwibmFtZSI6IlNldHVwIFBsYW5zL0J1bmRsZXMiLCJkZXNjcmlwdGlvbiI6Ik1ha2UgY2hhbmdlcyB0byBQbGFucyBhbmQgQnVuZGxlcyIsInVybF9wYXRoIjoiL2J1bmRsZV9wcmljZXMiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH1dLCJldkNoYXJnaW5nU2l0ZXMiOlt7ImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEyOSwibmFtZSI6InRlc3Qgc3RhdGlvbiIsImRlc2NyaXB0aW9uIjoiMzQgc2RzZHNkIiwiZ3BzX2xhdGl0dWRlIjoiMzEuNDkwMzA5NjIiLCJncHNfbG9uZ2l0dWRlIjoiNzQuNDAxNjQ1NjYiLCJkZWZhdWx0X2N1cnJlbmN5X2lkIjoxLCJ2YXRfaWQiOjEsImFkZHJlc3NfaWQiOjEzMCwiZXZfY2hhcmdpbmdfc2l0ZV9ncm91cF9pZCI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGx9XX1dLCJpYXQiOjE1OTc4MTE0MDl9.koNeFYpWWV07_QvQTd_QcfDam7q9LUpHi_dPP3BqWUY");
+                Call<ResponseBody> responseBodyCall = mNetworkClient.getNetworkWebService().saveToken(model, sharedPreferences.getString(AppConstant.TOKEN, ""));
                 responseBodyCall.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -260,8 +268,10 @@ public class NetworkApiController implements Runnable {
                     userListRequest.setAdmin_id(loginData.getResponse().getEId());
                     userListRequest.setLocation_id(loginData.getResponse().getLocation_id());
                 }
+                sharedPreferences = mContext.getSharedPreferences(RememberCredentials.SharedPreferenceName, Context.MODE_PRIVATE);
 
-                Call<UserListResponse> call = mNetworkClient.getNetworkWebService().orderList("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjkzNDc0MDksImRhdGEiOlt7ImV2X2NoYXJnaW5nX3NpdGVfc3RhZmZfaWQiOjEsImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEsInVzZXJfYWNjb3VudF9pZCI6Miwic3RhcnRfZGF0ZV90aW1lIjoiMjAyMC0wNy0wMVQwMDowMDowMC4wMDBaIiwiZW5kX2RhdGVfdGltZSI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInVzZXJBY2NvdW50Ijp7InVzZXJfYWNjb3VudF9pZCI6MiwidXNlcl9uYW1lIjoiam9oYW5zdGF0aW9ubWdyIiwiZW1haWxfYWRkcmVzcyI6ImpvaGFuQGFiYy5jb20iLCJwZXJzb25faWQiOjIsInBhc3N3b3JkIjoiQCNAQEAjIiwidXNlcl9yb2xlX2NvZGUiOiJTTSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJtb2JpbGVfcGhvbmVfbnVtYmVyIjpudWxsLCJwZXJzb24iOnsicGVyc29uX2lkIjoyLCJmaXJzdF9uYW1lIjoiSm9oYW4iLCJsYXN0X25hbWUiOiJTdGF0aW9uTWFuYWdlciIsInRpdGxlX2NvZGUiOiJNUiIsImRhdGVfb2ZfYmlydGgiOiIxOTc0LTAxLTAxIiwic2V4X2NvZGUiOiJNIiwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInNleFJlZiI6eyJzZXhfY29kZSI6Ik0iLCJuYW1lIjoiTWFsZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfSwicGVyc29uQWRkcmVzcyI6eyJwZXJzb25fYWRkcmVzc19pZCI6MiwiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwicGVyc29uX2lkIjoyLCJhZGRyZXNzX2lkIjoxLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbCwiYWRkcmVzc1R5cGVSZWYiOnsiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwibmFtZSI6Ik9mZmljZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfX19LCJ1c2VyUm9sZVJlZiI6eyJ1c2VyX3JvbGVfY29kZSI6IlNNIiwibmFtZSI6IlN0YXRpb24gTWFuYWdlciIsImNyZWF0aW9uX2RhdGVfdGltZSI6IjIwMjAtMDctMDFUMDA6MDA6MDAuMDAwWiIsInBlcm1pc3Npb24iOiI_Pz8_IiwidXNlcl9yb2xlX2dyb3VwX2NvZGUiOiJDUyIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJ1c2VyUm9sZUdyb3VwUmVmIjp7InVzZXJfcm9sZV9ncm91cF9jb2RlIjoiQ1MiLCJuYW1lIjoiQ2hhcmdpbmcgU2l0ZSIsImVuZHBvaW50IjoiYXV0aGVudGljYXRlX2V2X2NoYXJnaW5nX3NpdGVfc3RhZmYiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH19fSwidXNlY2FzZXNQZXJtaXR0ZWQiOlt7InVzZXJfcGVybWlzc2lvbl91c2VjYXNlX2lkIjoxLCJuYW1lIjoiU2V0dXAgUHJpY2VzIiwiZGVzY3JpcHRpb24iOiJNYWtlIGNoYW5nZXMgdG8gQ2hhcmdlIEl0ZXNtIiwidXJsX3BhdGgiOiIvY2hhcmdlX2l0ZW0iLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH0seyJ1c2VyX3Blcm1pc3Npb25fdXNlY2FzZV9pZCI6MiwibmFtZSI6IlNldHVwIFBsYW5zL0J1bmRsZXMiLCJkZXNjcmlwdGlvbiI6Ik1ha2UgY2hhbmdlcyB0byBQbGFucyBhbmQgQnVuZGxlcyIsInVybF9wYXRoIjoiL2J1bmRsZV9wcmljZXMiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH1dLCJldkNoYXJnaW5nU2l0ZXMiOlt7ImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEsIm5hbWUiOiJDaGFyZ2luZyBTaXRlIFBsYXphIiwiZGVzY3JpcHRpb24iOiJDaGFyZ2luZyBTaXRlIFBsYXphIGFuZCBTaG9wcGluZyBNYWxsIiwiZ3BzX2xhdGl0dWRlIjoiNTkuMzI2MTQyIiwiZ3BzX2xvbmdpdHVkZSI6IjE3Ljk4MjA1MyIsImRlZmF1bHRfY3VycmVuY3lfaWQiOjEsInZhdF9pZCI6MSwiYWRkcmVzc19pZCI6MiwiZXZfY2hhcmdpbmdfc2l0ZV9ncm91cF9pZCI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGx9XX0seyJldl9jaGFyZ2luZ19zaXRlX3N0YWZmX2lkIjoyLCJldl9jaGFyZ2luZ19zaXRlX2lkIjoxMjksInVzZXJfYWNjb3VudF9pZCI6Miwic3RhcnRfZGF0ZV90aW1lIjoiMjAyMC0wNy0wMVQwMDowMDowMC4wMDBaIiwiZW5kX2RhdGVfdGltZSI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInVzZXJBY2NvdW50Ijp7InVzZXJfYWNjb3VudF9pZCI6MiwidXNlcl9uYW1lIjoiam9oYW5zdGF0aW9ubWdyIiwiZW1haWxfYWRkcmVzcyI6ImpvaGFuQGFiYy5jb20iLCJwZXJzb25faWQiOjIsInBhc3N3b3JkIjoiQCNAQEAjIiwidXNlcl9yb2xlX2NvZGUiOiJTTSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJtb2JpbGVfcGhvbmVfbnVtYmVyIjpudWxsLCJwZXJzb24iOnsicGVyc29uX2lkIjoyLCJmaXJzdF9uYW1lIjoiSm9oYW4iLCJsYXN0X25hbWUiOiJTdGF0aW9uTWFuYWdlciIsInRpdGxlX2NvZGUiOiJNUiIsImRhdGVfb2ZfYmlydGgiOiIxOTc0LTAxLTAxIiwic2V4X2NvZGUiOiJNIiwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInNleFJlZiI6eyJzZXhfY29kZSI6Ik0iLCJuYW1lIjoiTWFsZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfSwicGVyc29uQWRkcmVzcyI6eyJwZXJzb25fYWRkcmVzc19pZCI6MiwiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwicGVyc29uX2lkIjoyLCJhZGRyZXNzX2lkIjoxLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbCwiYWRkcmVzc1R5cGVSZWYiOnsiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwibmFtZSI6Ik9mZmljZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfX19LCJ1c2VyUm9sZVJlZiI6eyJ1c2VyX3JvbGVfY29kZSI6IlNNIiwibmFtZSI6IlN0YXRpb24gTWFuYWdlciIsImNyZWF0aW9uX2RhdGVfdGltZSI6IjIwMjAtMDctMDFUMDA6MDA6MDAuMDAwWiIsInBlcm1pc3Npb24iOiI_Pz8_IiwidXNlcl9yb2xlX2dyb3VwX2NvZGUiOiJDUyIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJ1c2VyUm9sZUdyb3VwUmVmIjp7InVzZXJfcm9sZV9ncm91cF9jb2RlIjoiQ1MiLCJuYW1lIjoiQ2hhcmdpbmcgU2l0ZSIsImVuZHBvaW50IjoiYXV0aGVudGljYXRlX2V2X2NoYXJnaW5nX3NpdGVfc3RhZmYiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH19fSwidXNlY2FzZXNQZXJtaXR0ZWQiOlt7InVzZXJfcGVybWlzc2lvbl91c2VjYXNlX2lkIjoxLCJuYW1lIjoiU2V0dXAgUHJpY2VzIiwiZGVzY3JpcHRpb24iOiJNYWtlIGNoYW5nZXMgdG8gQ2hhcmdlIEl0ZXNtIiwidXJsX3BhdGgiOiIvY2hhcmdlX2l0ZW0iLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH0seyJ1c2VyX3Blcm1pc3Npb25fdXNlY2FzZV9pZCI6MiwibmFtZSI6IlNldHVwIFBsYW5zL0J1bmRsZXMiLCJkZXNjcmlwdGlvbiI6Ik1ha2UgY2hhbmdlcyB0byBQbGFucyBhbmQgQnVuZGxlcyIsInVybF9wYXRoIjoiL2J1bmRsZV9wcmljZXMiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH1dLCJldkNoYXJnaW5nU2l0ZXMiOlt7ImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEyOSwibmFtZSI6InRlc3Qgc3RhdGlvbiIsImRlc2NyaXB0aW9uIjoiMzQgc2RzZHNkIiwiZ3BzX2xhdGl0dWRlIjoiMzEuNDkwMzA5NjIiLCJncHNfbG9uZ2l0dWRlIjoiNzQuNDAxNjQ1NjYiLCJkZWZhdWx0X2N1cnJlbmN5X2lkIjoxLCJ2YXRfaWQiOjEsImFkZHJlc3NfaWQiOjEzMCwiZXZfY2hhcmdpbmdfc2l0ZV9ncm91cF9pZCI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGx9XX1dLCJpYXQiOjE1OTc4MTE0MDl9.koNeFYpWWV07_QvQTd_QcfDam7q9LUpHi_dPP3BqWUY");
+
+                Call<UserListResponse> call = mNetworkClient.getNetworkWebService().orderList(sharedPreferences.getString(AppConstant.TOKEN, ""));
 
                 call.enqueue(new Callback<UserListResponse>() {
                     @Override
@@ -307,6 +317,12 @@ public class NetworkApiController implements Runnable {
             @Override
             public void run() {
                 Uri uri = Uri.parse(file.toString());
+                int statusId = 0;
+                if (itemSelected.equalsIgnoreCase("Delivered")) {
+                    statusId = 3;
+                } else {
+                    statusId = 5;
+                }
                 File file = new File(uri.getPath());
                 RequestBody reqFile = new RequestBody() {
                     @Override
@@ -319,7 +335,7 @@ public class NetworkApiController implements Runnable {
 
                     }
                 };
-
+/*
                 Post post = new Post();
                 post.setDeliveryBoyNotes(deliveryBoyNotes);
                 if (itemSelected.equalsIgnoreCase("Delivered")) {
@@ -328,30 +344,29 @@ public class NetworkApiController implements Runnable {
                 }
 
                 post.setOrderId(id);
-                post.setCashRecieved(cashRecieved);
+                post.setCashRecieved(cashRecieved);*/
+                sharedPreferences = mContext.getSharedPreferences(RememberCredentials.SharedPreferenceName, Context.MODE_PRIVATE);
 
+                MultipartBody.Part upload = MultipartBody.Part.createFormData("file_name", file.getName(), reqFile);
+//                RequestBody json = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), (HelperMethod.convertJavaToJson(post)));
+                Call<GeneralResponseModel> call = mNetworkClient.getNetworkWebService().completeOrder(upload, id, statusId, deliveryBoyNotes, sharedPreferences.getString(AppConstant.TOKEN, ""));
 
-                MultipartBody.Part upload = MultipartBody.Part.createFormData("file", file.getName(), reqFile);
-                RequestBody json = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), (HelperMethod.convertJavaToJson(post)));
-                Call<DeliveryStatusResponse> call = mNetworkClient.getNetworkWebService().dataSend(upload, json);
-
-                call.enqueue(new Callback<DeliveryStatusResponse>() {
+                call.enqueue(new Callback<GeneralResponseModel>() {
                     @Override
-                    public void onResponse(Call<DeliveryStatusResponse> call, Response<DeliveryStatusResponse> response) {
+                    public void onResponse(Call<GeneralResponseModel> call, Response<GeneralResponseModel> response) {
 
-                        DeliveryStatusResponse webResponse = response.body();
-                        DeliveryStatus status = webResponse.getStatus();
+                      /*  DeliveryStatusResponse webResponse = response.body();
+                        DeliveryStatus status = webResponse.getStatus();*/
                         if (response.isSuccessful() && response != null) {
 
                             for (NetworkApiListener l : mListeners) {
-                                l.onResponse(status.getMessage(), status.getCode());
+                                l.onResponse(response.body().message, response.body().statusCode);
                                 Log.i(TAG, "post submitted to API." + response.body().toString());
                             }
 
                         } else {
                             for (NetworkApiListener l : mListeners) {
-                                l.onResponseError(status.getMessage());
-                                Log.i(TAG, "post submitted to API." + webResponse.toString());
+                                l.onResponseError(response.message());
                             }
 
                         }
@@ -359,7 +374,7 @@ public class NetworkApiController implements Runnable {
 
 
                     @Override
-                    public void onFailure(Call<DeliveryStatusResponse> call, Throwable t) {
+                    public void onFailure(Call<GeneralResponseModel> call, Throwable t) {
                         for (NetworkApiListener l : mListeners) {
                             l.onResponseError(t.getMessage());
                         }
@@ -370,7 +385,7 @@ public class NetworkApiController implements Runnable {
         });
     }
 
-    public void disputedCase(final String id, final File file, final String deliveryBoyNotes, final String itemSelected) {
+   /* public void disputedCase(final String id, final File file, final String deliveryBoyNotes, final String itemSelected) {
         threadPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -440,7 +455,7 @@ public class NetworkApiController implements Runnable {
             }
         });
     }
-
+*/
 
     public void undelivered(final String id, final String deliveryBoyNotes, final String itemSelected) {
         threadPool.execute(new Runnable() {
@@ -448,47 +463,53 @@ public class NetworkApiController implements Runnable {
             public void run() {
 
                 final Post post = new Post();
+                post.statusId = 8;
+                post.reason = deliveryBoyNotes;
+                sharedPreferences = mContext.getSharedPreferences(RememberCredentials.SharedPreferenceName, Context.MODE_PRIVATE);
 
-                if (itemSelected.equalsIgnoreCase("Undelivered"))
+              /*  if (itemSelected.equalsIgnoreCase("Undelivered"))
                     post.setOrderStatus("8");
                 if (itemSelected.equalsIgnoreCase("Disputed"))
                     post.setOrderStatus("5");
                 post.setOrderId(id);
                 post.setDeliveryBoyNotes(deliveryBoyNotes);
-                post.getDeliveryBoyNotes();
+                post.getDeliveryBoyNotes();*/
 
                 Gson gson = new Gson();
                 String Json = gson.toJson(post);
 
                 RequestBody json = RequestBody.create(MediaType.parse("text/plain"), Json);
-                Call<StatusResponse> call = mNetworkClient.getNetworkWebService().undeliveredService(json);
+                Call<GeneralResponseModel> call = mNetworkClient.getNetworkWebService().undeliveredOrder(Integer.parseInt(id), post, sharedPreferences.getString(AppConstant.TOKEN, ""));
 
-                call.enqueue(new Callback<StatusResponse>() {
+                call.enqueue(new Callback<GeneralResponseModel>() {
                     @Override
-                    public void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
+                    public void onResponse(Call<GeneralResponseModel> call, Response<GeneralResponseModel> response) {
 
-                        StatusResponse webResponse = response.body();
-                        Status status = webResponse.getStatus();
-                        if (status.getCode() == 200) {
+
+                        if (response.body().statusCode == 200) {
 
                             for (NetworkApiListener l : mListeners) {
-                                l.onResponse(status.getMessage(), status.getCode());
+                                l.onResponse(response.body().message, response.body().statusCode);
                                 Log.i(TAG, "post submitted to API." + response.body().toString());
                             }
 
+                        } else {
+                            for (NetworkApiListener l : mListeners) {
+                                l.onResponseError(response.message());
+                            }
                         }
-                        if (status.getCode() == 400) {
+                        /*if (status.getCode() == 400) {
                             for (NetworkApiListener l : mListeners) {
                                 l.onResponse(status.getMessage(), status.getCode());
                                 Log.i(TAG, "post submitted to API." + webResponse.toString());
                             }
 
-                        }
+                        }*/
                     }
 
 
                     @Override
-                    public void onFailure(Call<StatusResponse> call, Throwable t) {
+                    public void onFailure(Call<GeneralResponseModel> call, Throwable t) {
                         for (NetworkApiListener l : mListeners) {
                             l.onResponseError(t.getMessage());
                         }
@@ -503,26 +524,25 @@ public class NetworkApiController implements Runnable {
     public synchronized void getItems(String orderId) {
         RequestOrderId Request = new RequestOrderId();
         Request.setOrder_id(orderId);
+        sharedPreferences = mContext.getSharedPreferences(RememberCredentials.SharedPreferenceName, Context.MODE_PRIVATE);
 
-        Call<ProductsResponse> call = mNetworkClient.getNetworkWebService().getItems(Request);
-
-        call.enqueue(new Callback<ProductsResponse>() {
+        Call<OrderDetailResponseModel> call = mNetworkClient.getNetworkWebService().getOrderDetail(Integer.parseInt(orderId), sharedPreferences.getString(AppConstant.TOKEN, ""));
+        call.enqueue(new Callback<OrderDetailResponseModel>() {
             @Override
-            public void onResponse(Call<ProductsResponse> call, Response<ProductsResponse> response) {
+            public void onResponse(Call<OrderDetailResponseModel> call, Response<OrderDetailResponseModel> response) {
                 try {
                     if (response.isSuccessful() && response != null) {
-                        ProductsResponse itemslistobject = response.body();
-                        ProductStatus itemsStatus = itemslistobject.getStatus();
+                        OrderDetailResponseModel itemslistobject = response.body();
 
 
-                        if (itemsStatus.getCode() == 200 && itemsStatus != null) {
+                        if (itemslistobject.statusCode == 200 && itemslistobject != null) {
                             for (NetworkApiListener m : mListeners) {
-                                m.onResponseItem(itemsStatus.getMessage());
-                                m.onItemResponse(itemslistobject.getResponse().getProducts());
+                                m.onResponseItem(itemslistobject.message);
+                                m.onItemResponse(itemslistobject.response);
                             }
                         } else {
                             for (NetworkApiListener m : mListeners) {
-                                m.onResponse(itemsStatus.getMessage());
+                                m.onResponse(itemslistobject.message);
                             }
                         }
                     }
@@ -534,7 +554,7 @@ public class NetworkApiController implements Runnable {
             }
 
             @Override
-            public void onFailure(Call<ProductsResponse> call, Throwable t) {
+            public void onFailure(Call<OrderDetailResponseModel> call, Throwable t) {
                 t.printStackTrace();
             }
         });
@@ -609,30 +629,28 @@ public class NetworkApiController implements Runnable {
             public void run() {
 
 
-                final ProfileRequest profileRequest = new ProfileRequest();
-                profileRequest.setE_id(loginData.getResponse().getEId());
+                /*final ProfileRequest profileRequest = new ProfileRequest();
+                profileRequest.setE_id(loginData.getResponse().getEId());*/
+                sharedPreferences = mContext.getSharedPreferences(RememberCredentials.SharedPreferenceName, Context.MODE_PRIVATE);
 
-                Call<ProfileResponse> call = mNetworkClient.getNetworkWebService().getProfile(profileRequest);
 
-                call.enqueue(new Callback<ProfileResponse>() {
+                Call<LoginResponse> call = mNetworkClient.getNetworkWebService().getDriverProfile(sharedPreferences.getString(AppConstant.DRIVERID,"0"),sharedPreferences.getString(AppConstant.TOKEN,""));
+
+                call.enqueue(new Callback<LoginResponse>() {
                     @Override
-                    public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
+                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
                         if (response.isSuccessful() && response != null) {
 
-                            ProfileResponse webResponse = response.body();
 
-                            com.example.khushbakht.grocerjin.model.profile.Status status = webResponse.getStatus();
-
-
-                            if (status.getCode() == 200) {
+                            if (response.body().getStatusCode() == 200) {
                                 for (NetworkApiListener l : mListeners) {
-                                    l.onResponseProfile(status.getMessage(), status.getCode(), webResponse.getResponse().getName(), webResponse.getResponse().getUsername(), webResponse.getResponse().getLocation(), webResponse.getResponse().getLatitude(), webResponse.getResponse().getLongitude());
+                                    l.onResponseProfile(response.body().getMessage(), response.body().getStatusCode(), response.body().getResponse().getDriverDetail().getDriverName(), response.body().getResponse().getDriverDetail().getDriverEmail(), "", "", "");
 
                                 }
                             } else {
                                 for (NetworkApiListener l : mListeners) {
-                                    l.onResponse(status.getMessage());
+                                    l.onResponse(response.message());
                                 }
 
 
@@ -642,7 +660,7 @@ public class NetworkApiController implements Runnable {
 
 
                     @Override
-                    public void onFailure(Call<ProfileResponse> call, Throwable t) {
+                    public void onFailure(Call<LoginResponse> call, Throwable t) {
                         for (NetworkApiListener l : mListeners) {
                             l.onResponseError(t.getMessage());
                         }
@@ -676,7 +694,7 @@ public class NetworkApiController implements Runnable {
 
                 //Request.setorder_status("3");
 
-                Call<PickResponse> call = mNetworkClient.getNetworkWebService().pickUpOrder("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjkzNDc0MDksImRhdGEiOlt7ImV2X2NoYXJnaW5nX3NpdGVfc3RhZmZfaWQiOjEsImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEsInVzZXJfYWNjb3VudF9pZCI6Miwic3RhcnRfZGF0ZV90aW1lIjoiMjAyMC0wNy0wMVQwMDowMDowMC4wMDBaIiwiZW5kX2RhdGVfdGltZSI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInVzZXJBY2NvdW50Ijp7InVzZXJfYWNjb3VudF9pZCI6MiwidXNlcl9uYW1lIjoiam9oYW5zdGF0aW9ubWdyIiwiZW1haWxfYWRkcmVzcyI6ImpvaGFuQGFiYy5jb20iLCJwZXJzb25faWQiOjIsInBhc3N3b3JkIjoiQCNAQEAjIiwidXNlcl9yb2xlX2NvZGUiOiJTTSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJtb2JpbGVfcGhvbmVfbnVtYmVyIjpudWxsLCJwZXJzb24iOnsicGVyc29uX2lkIjoyLCJmaXJzdF9uYW1lIjoiSm9oYW4iLCJsYXN0X25hbWUiOiJTdGF0aW9uTWFuYWdlciIsInRpdGxlX2NvZGUiOiJNUiIsImRhdGVfb2ZfYmlydGgiOiIxOTc0LTAxLTAxIiwic2V4X2NvZGUiOiJNIiwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInNleFJlZiI6eyJzZXhfY29kZSI6Ik0iLCJuYW1lIjoiTWFsZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfSwicGVyc29uQWRkcmVzcyI6eyJwZXJzb25fYWRkcmVzc19pZCI6MiwiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwicGVyc29uX2lkIjoyLCJhZGRyZXNzX2lkIjoxLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbCwiYWRkcmVzc1R5cGVSZWYiOnsiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwibmFtZSI6Ik9mZmljZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfX19LCJ1c2VyUm9sZVJlZiI6eyJ1c2VyX3JvbGVfY29kZSI6IlNNIiwibmFtZSI6IlN0YXRpb24gTWFuYWdlciIsImNyZWF0aW9uX2RhdGVfdGltZSI6IjIwMjAtMDctMDFUMDA6MDA6MDAuMDAwWiIsInBlcm1pc3Npb24iOiI_Pz8_IiwidXNlcl9yb2xlX2dyb3VwX2NvZGUiOiJDUyIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJ1c2VyUm9sZUdyb3VwUmVmIjp7InVzZXJfcm9sZV9ncm91cF9jb2RlIjoiQ1MiLCJuYW1lIjoiQ2hhcmdpbmcgU2l0ZSIsImVuZHBvaW50IjoiYXV0aGVudGljYXRlX2V2X2NoYXJnaW5nX3NpdGVfc3RhZmYiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH19fSwidXNlY2FzZXNQZXJtaXR0ZWQiOlt7InVzZXJfcGVybWlzc2lvbl91c2VjYXNlX2lkIjoxLCJuYW1lIjoiU2V0dXAgUHJpY2VzIiwiZGVzY3JpcHRpb24iOiJNYWtlIGNoYW5nZXMgdG8gQ2hhcmdlIEl0ZXNtIiwidXJsX3BhdGgiOiIvY2hhcmdlX2l0ZW0iLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH0seyJ1c2VyX3Blcm1pc3Npb25fdXNlY2FzZV9pZCI6MiwibmFtZSI6IlNldHVwIFBsYW5zL0J1bmRsZXMiLCJkZXNjcmlwdGlvbiI6Ik1ha2UgY2hhbmdlcyB0byBQbGFucyBhbmQgQnVuZGxlcyIsInVybF9wYXRoIjoiL2J1bmRsZV9wcmljZXMiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH1dLCJldkNoYXJnaW5nU2l0ZXMiOlt7ImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEsIm5hbWUiOiJDaGFyZ2luZyBTaXRlIFBsYXphIiwiZGVzY3JpcHRpb24iOiJDaGFyZ2luZyBTaXRlIFBsYXphIGFuZCBTaG9wcGluZyBNYWxsIiwiZ3BzX2xhdGl0dWRlIjoiNTkuMzI2MTQyIiwiZ3BzX2xvbmdpdHVkZSI6IjE3Ljk4MjA1MyIsImRlZmF1bHRfY3VycmVuY3lfaWQiOjEsInZhdF9pZCI6MSwiYWRkcmVzc19pZCI6MiwiZXZfY2hhcmdpbmdfc2l0ZV9ncm91cF9pZCI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGx9XX0seyJldl9jaGFyZ2luZ19zaXRlX3N0YWZmX2lkIjoyLCJldl9jaGFyZ2luZ19zaXRlX2lkIjoxMjksInVzZXJfYWNjb3VudF9pZCI6Miwic3RhcnRfZGF0ZV90aW1lIjoiMjAyMC0wNy0wMVQwMDowMDowMC4wMDBaIiwiZW5kX2RhdGVfdGltZSI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInVzZXJBY2NvdW50Ijp7InVzZXJfYWNjb3VudF9pZCI6MiwidXNlcl9uYW1lIjoiam9oYW5zdGF0aW9ubWdyIiwiZW1haWxfYWRkcmVzcyI6ImpvaGFuQGFiYy5jb20iLCJwZXJzb25faWQiOjIsInBhc3N3b3JkIjoiQCNAQEAjIiwidXNlcl9yb2xlX2NvZGUiOiJTTSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJtb2JpbGVfcGhvbmVfbnVtYmVyIjpudWxsLCJwZXJzb24iOnsicGVyc29uX2lkIjoyLCJmaXJzdF9uYW1lIjoiSm9oYW4iLCJsYXN0X25hbWUiOiJTdGF0aW9uTWFuYWdlciIsInRpdGxlX2NvZGUiOiJNUiIsImRhdGVfb2ZfYmlydGgiOiIxOTc0LTAxLTAxIiwic2V4X2NvZGUiOiJNIiwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGwsInNleFJlZiI6eyJzZXhfY29kZSI6Ik0iLCJuYW1lIjoiTWFsZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfSwicGVyc29uQWRkcmVzcyI6eyJwZXJzb25fYWRkcmVzc19pZCI6MiwiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwicGVyc29uX2lkIjoyLCJhZGRyZXNzX2lkIjoxLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbCwiYWRkcmVzc1R5cGVSZWYiOnsiYWRkcmVzc190eXBlX2NvZGUiOiJPIiwibmFtZSI6Ik9mZmljZSIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsfX19LCJ1c2VyUm9sZVJlZiI6eyJ1c2VyX3JvbGVfY29kZSI6IlNNIiwibmFtZSI6IlN0YXRpb24gTWFuYWdlciIsImNyZWF0aW9uX2RhdGVfdGltZSI6IjIwMjAtMDctMDFUMDA6MDA6MDAuMDAwWiIsInBlcm1pc3Npb24iOiI_Pz8_IiwidXNlcl9yb2xlX2dyb3VwX2NvZGUiOiJDUyIsImxhc3RfdXBkYXRlZF9ieSI6bnVsbCwibGFzdF91cGRhdGVkX2F0IjpudWxsLCJ1c2VyUm9sZUdyb3VwUmVmIjp7InVzZXJfcm9sZV9ncm91cF9jb2RlIjoiQ1MiLCJuYW1lIjoiQ2hhcmdpbmcgU2l0ZSIsImVuZHBvaW50IjoiYXV0aGVudGljYXRlX2V2X2NoYXJnaW5nX3NpdGVfc3RhZmYiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH19fSwidXNlY2FzZXNQZXJtaXR0ZWQiOlt7InVzZXJfcGVybWlzc2lvbl91c2VjYXNlX2lkIjoxLCJuYW1lIjoiU2V0dXAgUHJpY2VzIiwiZGVzY3JpcHRpb24iOiJNYWtlIGNoYW5nZXMgdG8gQ2hhcmdlIEl0ZXNtIiwidXJsX3BhdGgiOiIvY2hhcmdlX2l0ZW0iLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH0seyJ1c2VyX3Blcm1pc3Npb25fdXNlY2FzZV9pZCI6MiwibmFtZSI6IlNldHVwIFBsYW5zL0J1bmRsZXMiLCJkZXNjcmlwdGlvbiI6Ik1ha2UgY2hhbmdlcyB0byBQbGFucyBhbmQgQnVuZGxlcyIsInVybF9wYXRoIjoiL2J1bmRsZV9wcmljZXMiLCJsYXN0X3VwZGF0ZWRfYnkiOm51bGwsImxhc3RfdXBkYXRlZF9hdCI6bnVsbH1dLCJldkNoYXJnaW5nU2l0ZXMiOlt7ImV2X2NoYXJnaW5nX3NpdGVfaWQiOjEyOSwibmFtZSI6InRlc3Qgc3RhdGlvbiIsImRlc2NyaXB0aW9uIjoiMzQgc2RzZHNkIiwiZ3BzX2xhdGl0dWRlIjoiMzEuNDkwMzA5NjIiLCJncHNfbG9uZ2l0dWRlIjoiNzQuNDAxNjQ1NjYiLCJkZWZhdWx0X2N1cnJlbmN5X2lkIjoxLCJ2YXRfaWQiOjEsImFkZHJlc3NfaWQiOjEzMCwiZXZfY2hhcmdpbmdfc2l0ZV9ncm91cF9pZCI6bnVsbCwibGFzdF91cGRhdGVkX2J5IjpudWxsLCJsYXN0X3VwZGF0ZWRfYXQiOm51bGx9XX1dLCJpYXQiOjE1OTc4MTE0MDl9.koNeFYpWWV07_QvQTd_QcfDam7q9LUpHi_dPP3BqWUY",
+                Call<PickResponse> call = mNetworkClient.getNetworkWebService().pickUpOrder(sharedPreferences.getString(AppConstant.TOKEN, ""),
                         orderId, request);
 
                 call.enqueue(new Callback<PickResponse>() {

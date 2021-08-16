@@ -4,10 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -82,9 +86,12 @@ public class UndeliveredOrder extends AppCompatActivity {
         addressText.setText(address);
         comments.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -93,16 +100,16 @@ public class UndeliveredOrder extends AppCompatActivity {
                 }
             }
         });
-        String date=timeOfDelivery;
-        SimpleDateFormat spf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date newDate= null;
+        String date = timeOfDelivery;
+        SimpleDateFormat spf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+        Date newDate = null;
         try {
             newDate = spf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        spf= new SimpleDateFormat("MMM dd, yyyy   hh:mm");
-        if (newDate!= null) {
+        spf = new SimpleDateFormat("MMM dd, yyyy   hh:mm");
+        if (newDate != null) {
             date = spf.format(newDate);
         }
         timeOfdelivery.setText(date);
@@ -126,7 +133,7 @@ public class UndeliveredOrder extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (orderId!= null) {
+                if (orderId != null) {
 
                     mNetworkApiController.undelivered(orderId, comments.getText().toString(), itemSelected);
                     pd = new ProgressDialog(UndeliveredOrder.this);
@@ -141,6 +148,7 @@ public class UndeliveredOrder extends AppCompatActivity {
     public void setContext(UndeliveredOrder context) {
         this.context = context;
     }
+
     public Context getContext() {
         return context;
     }
@@ -164,11 +172,10 @@ public class UndeliveredOrder extends AppCompatActivity {
             super.onResponse(statusMessage, statusCode);
             pd.dismiss();
 
-            if(statusCode == 200)
-            {
+            if (statusCode == 200) {
                 dialog = new AlertDialog.Builder(UndeliveredOrder.this);
                 dialog.setMessage(statusMessage);
-                dialog.setNegativeButton(Html.fromHtml("<b>"+getString(R.string.ok_button)+"</b>"),
+                dialog.setNegativeButton(Html.fromHtml("<b>" + getString(R.string.ok_button) + "</b>"),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -181,8 +188,7 @@ public class UndeliveredOrder extends AppCompatActivity {
                         });
                 dialog.show();
 
-            }
-            else {
+            } else {
                 dialog = new AlertDialog.Builder(UndeliveredOrder.this);
                 dialog.setMessage(statusMessage);
                 dialog.setNegativeButton(Html.fromHtml("<b>" + getString(R.string.ok_button) + "</b>"),
@@ -195,14 +201,12 @@ public class UndeliveredOrder extends AppCompatActivity {
             }
 
 
-
-
         }
 
         @Override
         public void onResponseError(String statusMessageError) {
             super.onResponseError(statusMessageError);
-            Toast.makeText(getContext(), statusMessageError , Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), statusMessageError, Toast.LENGTH_SHORT).show();
         }
     }
 

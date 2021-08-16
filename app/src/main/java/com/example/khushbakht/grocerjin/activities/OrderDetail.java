@@ -54,6 +54,7 @@ public class OrderDetail extends AppCompatActivity implements OnMapReadyCallback
     TextView address;
     TextView paidMoney;
     TextView phoneNo;
+    TextView orderNote, orderNoteTv, paymentMethod;
     ImageButton refresh, callCustomer;
     Double lat, lng;
     Calendar yourDate = Calendar.getInstance();
@@ -97,6 +98,9 @@ public class OrderDetail extends AppCompatActivity implements OnMapReadyCallback
         orderNo = (TextView) findViewById(R.id.orderNo);
         address = (TextView) findViewById(R.id.address);
         refresh = (ImageButton) findViewById(R.id.refresh);
+        orderNote = findViewById(R.id.orderNote);
+        orderNoteTv = findViewById(R.id.orderNoteTv);
+        paymentMethod = findViewById(R.id.paymentMethod);
         ImageButton back = (ImageButton) findViewById(R.id.backButton);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,8 +133,21 @@ public class OrderDetail extends AppCompatActivity implements OnMapReadyCallback
         totalAmount = orderobject.getAmount();
         addressToPass = orderobject.getAddress();
         timeOfDelivery = orderobject.getDateTime();
-        phoneNumber = orderobject.getPhone_number();
+        phoneNumber = orderobject.customerPhoneNo;
         totalItems = orderobject.getTotalItems();
+        if (orderobject.orderNote != null && orderobject.orderNote.length() > 0) {
+            orderNoteTv.setVisibility(View.VISIBLE);
+            orderNote.setVisibility(View.VISIBLE);
+            orderNote.setText(orderobject.orderNote.toString());
+        } else {
+            orderNote.setVisibility(View.GONE);
+            orderNoteTv.setVisibility(View.GONE);
+        }
+        if (orderobject.paymentMethod == 1) {
+            paymentMethod.setText(":Cash on Delivery");
+        } else {
+            paymentMethod.setText(":Customer Already Paid bill");
+        }
         lats = orderobject.getLatitude();
         lngs = orderobject.getLongitude();
         if (!lats.equalsIgnoreCase("") && !lngs.equalsIgnoreCase("")) {
